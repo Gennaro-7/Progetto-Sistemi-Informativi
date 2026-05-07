@@ -1,0 +1,48 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2>Modifica Turno</h2>
+    </x-slot>
+
+    <div class="p-6">
+
+        <form method="POST" action="{{ route('turni.update', $turno->id) }}" class="space-y-4">
+            @csrf
+            @method('PUT')
+
+            <input type="date"
+                   name="data"
+                   value="{{ $turno->data }}"
+                   class="border p-2 w-full">
+
+            <select name="turno" class="border p-2 w-full">
+
+                <option value="mattina" @selected($turno->turno=='mattina')>
+                    Mattina
+                </option>
+
+                <option value="pomeriggio" @selected($turno->turno=='pomeriggio')>
+                    Pomeriggio
+                </option>
+
+                <option value="notte" @selected($turno->turno=='notte')>
+                    Notte
+                </option>
+
+            </select>
+
+            <input type="text"
+                   name="dipendente"
+                   value="{{ $turno->dipendente }}"
+                   class="border p-2 w-full">
+
+            <textarea name="note"
+                      class="border p-2 w-full">{{ $turno->note }}</textarea>
+
+            <button class="bg-blue-500 text-white px-4 py-2">
+                Salva Modifiche
+            </button>
+
+        </form>
+
+    </div>
+</x-app-layout>
