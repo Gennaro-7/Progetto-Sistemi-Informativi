@@ -19,6 +19,10 @@
 
                     @if(Auth::user()->role === 'admin')
 
+                        <x-nav-link :href="route('dipendenti')" :active="request()->routeIs('dipendenti')">
+                            Dipendenti
+                        </x-nav-link>
+
                         <div class="relative">
                             <button @click="calOpen = !calOpen"
                                 class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white">
@@ -117,6 +121,7 @@
         <a href="{{ route('dashboard') }}" class="block">Dashboard</a>
 
         @if(Auth::user()->role === 'admin')
+            <a href="{{ route('dipendenti') }}" class="block">Dipendenti</a>
             <a href="{{ route('turni') }}" class="block">Gestione Turni</a>
             <a href="{{ route('ferie') }}" class="block">Ferie</a>
             <a href="{{ route('stipendi') }}" class="block">Storico Stipendi</a>
