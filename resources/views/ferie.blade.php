@@ -8,15 +8,17 @@
         <form method="POST" action="{{ route('ferie.store') }}" class="space-y-4 mb-8">
             @csrf
 
-            <select name="dipendente_id" class="border p-2 w-full" required>
-                <option value="">Seleziona dipendente</option>
+       @if(Auth::user()->role === 'admin')
+    <select name="dipendente_id" class="border p-2 w-full" required>
+        <option value="">Seleziona dipendente</option>
 
-                @foreach($dipendenti as $dipendente)
-                    <option value="{{ $dipendente->id }}">
-                        {{ $dipendente->nome }} {{ $dipendente->cognome }}
-                    </option>
-                @endforeach
-            </select>
+        @foreach($dipendenti as $dipendente)
+            <option value="{{ $dipendente->id }}">
+                {{ $dipendente->nome }} {{ $dipendente->cognome }}
+            </option>
+        @endforeach
+    </select>
+        @endif 
 
             <input type="date" name="data_inizio" class="border p-2 w-full" required>
 

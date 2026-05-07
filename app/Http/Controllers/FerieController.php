@@ -27,7 +27,8 @@ class FerieController extends Controller
     return view('ferie', compact('ferie', 'dipendenti'));
 }
     public function store(Request $request)
-    {
+{
+    if (auth()->user()->role === 'admin') {
         $request->validate([
             'dipendente_id' => 'required|exists:dipendenti,id',
             'data_inizio' => 'required|date',
@@ -35,16 +36,33 @@ class FerieController extends Controller
             'motivo' => 'nullable|string',
         ]);
 
-        Ferie::create([
-            'dipendente_id' => $request->dipendente_id,
-            'data_inizio' => $request->data_inizio,
-            'data_fine' => $request->data_fine,
-            'motivo' => $request->motivo,
-            'stato' => 'in_attesa',
+        $dipendenteId = $request->dipendente_id;
+    } else {
+        $request->validate([
+            'data_inizio' => 'required|date',
+            'data_fine' => 'required|date|after_or_equal:data_inizio',
+            'motivo' => 'nullable|string',
         ]);
 
-        return redirect()->route('ferie');
+        $dipendente = \App\Models\Dipendente::where('user_id', auth()->id())->first();
+
+        if (!$dipendente) {
+            abort(403, 'Il tuo account non è collegato a un dipendente.');
+        }
+
+        $dipendenteId = $dipendente->id;
     }
+
+    Ferie::create([
+        'dipendente_id' => $dipendenteId,
+        'data_inizio' => $request->data_inizio,
+        'data_fine' => $request->data_fine,
+        'motivo' => $request->motivo,
+        'stato' => 'in_attesa',
+    ]);
+
+    return redirect()->route('ferie');
+}
     public function approva(Ferie $ferie)
 {
     if (auth()->user()->role !== 'admin') {
