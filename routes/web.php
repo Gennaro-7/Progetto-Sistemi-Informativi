@@ -7,6 +7,7 @@ use App\Http\Controllers\FerieController;
 use App\Models\Turno;
 use App\Models\Ferie;
 use App\Models\Dipendente;
+use App\Http\Controllers\DipendenteController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -75,6 +76,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/ferie', [FerieController::class, 'store'])->name('ferie.store');
     Route::put('/ferie/{ferie}/approva', [FerieController::class, 'approva'])->name('ferie.approva');
     Route::put('/ferie/{ferie}/rifiuta', [FerieController::class, 'rifiuta'])->name('ferie.rifiuta');
+    Route::get('/dipendenti', [DipendenteController::class, 'index'])->name('dipendenti');
+    Route::post('/dipendenti', [DipendenteController::class, 'store'])->name('dipendenti.store');
 });
 
 require __DIR__.'/auth.php';
