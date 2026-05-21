@@ -1,7 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2>Gestione Dipendenti</h2>
-    </x-slot>
 
     <div class="p-6">
 
@@ -22,23 +19,37 @@
                 @endforeach
             </select>
 
-            <button class="bg-blue-500 text-white px-4 py-2">
+            <button class="bg-blue-500 text-white px-4 py-2 rounded">
                 Salva Dipendente
             </button>
         </form>
 
-        <div>
-            @foreach($dipendenti as $dipendente)
-                <div class="border p-3 mb-2 rounded">
-                    <strong>{{ $dipendente->nome }} {{ $dipendente->cognome }}</strong>
+        @foreach($dipendenti as $dipendente)
+            <div class="border p-4 mb-3 rounded flex justify-between items-center bg-white">
+
+                <div>
+                    <strong>
+                        ID{{ $dipendente->id }} - {{ $dipendente->nome }} {{ $dipendente->cognome }}
+                    </strong>
 
                     <div>
                         Account collegato:
                         {{ optional($dipendente->user)->email ?? 'Nessun account' }}
                     </div>
                 </div>
-            @endforeach
-        </div>
+
+                <form method="POST" action="{{ route('dipendenti.destroy', $dipendente->id) }}">
+                    @csrf
+                    @method('DELETE')
+
+                    <button onclick="return confirm('Eliminare dipendente?')"
+                            class="text-red-500 hover:text-red-700 text-xl">
+                        🗑️
+                    </button>
+                </form>
+
+            </div>
+        @endforeach
 
     </div>
 </x-app-layout>

@@ -40,4 +40,14 @@ class DipendenteController extends Controller
 
         return redirect()->route('dipendenti');
     }
+    public function destroy(Dipendente $dipendente)
+{
+    if (auth()->user()->role !== 'admin') {
+        abort(403);
+    }
+
+    $dipendente->delete();
+
+    return redirect()->route('dipendenti');
+}
 }
