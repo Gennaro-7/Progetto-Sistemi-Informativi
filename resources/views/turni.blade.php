@@ -1,9 +1,40 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2>Gestione Turni</h2>
-    </x-slot>
+    @if(auth()->user()->role === 'admin')
+    <div class="px-6 py-4 bg-white border-b">
+        <h2 class="font-semibold text-xl">
+            Gestione Turni
+        </h2>
+    </div>
+@endif
 
     <div class="p-6">
+        <div class="bg-white p-6 rounded shadow mb-8">
+    <div id="calendar"></div>
+</div>
+
+<script>
+    window.turniEvents = @json($events);
+</script>
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+
+        if (!calendarEl) return;
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'it',
+            height: 600,
+            events: window.turniEvents
+        });
+
+        calendar.render();
+    });
+</script>
         <div id="calendar" class="mb-8 max-w-5xl mx-auto bg-white p-4 rounded shadow"></div>
 
         <script>

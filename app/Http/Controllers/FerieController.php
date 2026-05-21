@@ -30,19 +30,22 @@ class FerieController extends Controller
 {
     if (auth()->user()->role === 'admin') {
         $request->validate([
-            'dipendente_id' => 'required|exists:dipendenti,id',
-            'data_inizio' => 'required|date',
-            'data_fine' => 'required|date|after_or_equal:data_inizio',
-            'motivo' => 'nullable|string',
-        ]);
+    'data_inizio' => 'required|date',
+    'data_fine' => 'required|date|after_or_equal:data_inizio',
+    'motivo' => 'nullable|string',
+], [
+    'data_fine.after_or_equal' => 'La data di fine non può essere precedente alla data di inizio.',
+]);
 
         $dipendenteId = $request->dipendente_id;
     } else {
         $request->validate([
-            'data_inizio' => 'required|date',
-            'data_fine' => 'required|date|after_or_equal:data_inizio',
-            'motivo' => 'nullable|string',
-        ]);
+    'data_inizio' => 'required|date',
+    'data_fine' => 'required|date|after_or_equal:data_inizio',
+    'motivo' => 'nullable|string',
+], [
+    'data_fine.after_or_equal' => 'La data di fine non può essere precedente alla data di inizio.',
+]);
 
         $dipendente = \App\Models\Dipendente::where('user_id', auth()->id())->first();
 

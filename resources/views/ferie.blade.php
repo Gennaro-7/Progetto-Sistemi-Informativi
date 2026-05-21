@@ -1,39 +1,33 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2>Gestione Ferie</h2>
-    </x-slot>
-
+@if(auth()->user()->role === 'admin')
+    <div class="px-6 py-4 bg-white border-b">
+        <h2 class="font-semibold text-xl">
+            Gestione Ferie
+        </h2>
+    </div>
+@endif
     <div class="p-6">
 
-        <form method="POST" action="{{ route('ferie.store') }}" class="space-y-4 mb-8">
-            @csrf
+        @if(Auth::user()->role === 'dipendente')
+            <form method="POST" action="{{ route('ferie.store') }}" class="space-y-4 mb-8">
+                @csrf
 
-       @if(Auth::user()->role === 'admin')
-    <select name="dipendente_id" class="border p-2 w-full" required>
-        <option value="">Seleziona dipendente</option>
+                <input type="date" name="data_inizio" class="border p-2 w-full" required>
 
-        @foreach($dipendenti as $dipendente)
-            <option value="{{ $dipendente->id }}">
-                {{ $dipendente->nome }} {{ $dipendente->cognome }}
-            </option>
-        @endforeach
-    </select>
-        @endif 
+                <input type="date" name="data_fine" class="border p-2 w-full" required>
 
-            <input type="date" name="data_inizio" class="border p-2 w-full" required>
+                <textarea name="motivo" placeholder="Motivo richiesta ferie" class="border p-2 w-full"></textarea>
 
-            <input type="date" name="data_fine" class="border p-2 w-full" required>
-
-            <textarea name="motivo" placeholder="Motivo richiesta ferie" class="border p-2 w-full"></textarea>
-
-            <button class="bg-blue-500 text-white px-4 py-2">
-                Invia richiesta
-            </button>
-        </form>
+                <button class="bg-blue-500 text-white px-4 py-2">
+                    Invia richiesta
+                </button>
+            </form>
+        @endif
 
         <div>
             @foreach($ferie as $f)
-                <div class="border p-3 mb-2 rounded">
+                <div class="border p-3 mb-2 rounded bg-white">
+
                     <strong>
                         {{ optional($f->dipendente)->nome }} {{ optional($f->dipendente)->cognome }}
                     </strong>
@@ -71,6 +65,7 @@
                             </form>
                         </div>
                     @endif
+
                 </div>
             @endforeach
         </div>
