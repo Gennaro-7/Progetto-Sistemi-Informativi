@@ -1,7 +1,17 @@
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+<div class="text-center mb-6">
 
+    <h1 class="text-3xl font-bold text-teal-600">
+        PoliWork HR
+    </h1>
+
+    <p class="text-gray-500 mt-2">
+        Sistema Gestione Personale
+    </p>
+
+</div>
     <form method="POST" action="{{ route('login') }}">
         @csrf
 

@@ -1,36 +1,40 @@
 <x-app-layout>
-
-
     <div class="p-6 space-y-6">
+
+        <div>
+    <p class="text-2xl text-teal-600 mt-1">
+        Benvenuto in PoliWork HR
+    </p>
+</div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             @if(auth()->user()->role === 'admin')
-                <div class="bg-blue-500 text-white p-6 rounded shadow">
-                    <div class="text-sm">Dipendenti</div>
-                    <div class="text-3xl font-bold">
+                <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
+                    <div class="text-sm text-gray-500">Dipendenti</div>
+                    <div class="text-4xl font-bold text-teal-600 mt-2">
                         {{ $totaleDipendenti }}
                     </div>
                 </div>
             @endif
 
-            <div class="bg-green-500 text-white p-6 rounded shadow">
-                <div class="text-sm">Turni</div>
-                <div class="text-3xl font-bold">
+            <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
+                <div class="text-sm text-gray-500">Turni</div>
+                <div class="text-4xl font-bold text-blue-600 mt-2">
                     {{ $totaleTurni }}
                 </div>
             </div>
 
-            <div class="bg-yellow-500 text-white p-6 rounded shadow">
-                <div class="text-sm">Ferie in attesa</div>
-                <div class="text-3xl font-bold">
+            <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
+                <div class="text-sm text-gray-500">Ferie in attesa</div>
+                <div class="text-4xl font-bold text-yellow-500 mt-2">
                     {{ $ferieInAttesa }}
                 </div>
             </div>
 
-            <div class="bg-purple-500 text-white p-6 rounded shadow">
-                <div class="text-sm">Buste paga</div>
-                <div class="text-3xl font-bold">
+            <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
+                <div class="text-sm text-gray-500">Buste paga</div>
+                <div class="text-4xl font-bold text-purple-600 mt-2">
                     {{ $totaleStipendi }}
                 </div>
             </div>
@@ -39,59 +43,76 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <div class="bg-white p-6 rounded shadow">
-                <h3 class="font-bold mb-4">
+            <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
+                <h3 class="font-bold text-gray-900 mb-4">
                     Ultimi turni
                 </h3>
 
                 <div class="space-y-3">
-                    @foreach($ultimiTurni as $turno)
-                        <div class="border-b pb-2">
-                            <div class="font-semibold">
-                                {{ $turno->turno }}
+                    @forelse($ultimiTurni as $turno)
+                        <div class="flex justify-between border-b border-gray-100 pb-3">
+                            <div>
+                                <div class="font-semibold text-gray-900">
+                                    {{ ucfirst($turno->turno) }}
+                                </div>
+
+                                <div class="text-sm text-gray-500">
+                                    {{ optional($turno->dipendente)->nome }}
+                                    {{ optional($turno->dipendente)->cognome }}
+                                </div>
                             </div>
 
                             <div class="text-sm text-gray-500">
                                 {{ $turno->data }}
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-gray-500">
+                            Nessun turno presente.
+                        </p>
+                    @endforelse
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded shadow">
-                <h3 class="font-bold mb-4">
+            <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
+                <h3 class="font-bold text-gray-900 mb-4">
                     Ultime ferie
                 </h3>
 
                 <div class="space-y-3">
-                    @foreach($ultimeFerie as $ferie)
-                        <div class="border-b pb-2">
-                            <div class="font-semibold">
-                                {{ $ferie->data_inizio }} → {{ $ferie->data_fine }}
+                    @forelse($ultimeFerie as $ferie)
+                        <div class="flex justify-between border-b border-gray-100 pb-3">
+                            <div>
+                                <div class="font-semibold text-gray-900">
+                                    {{ $ferie->data_inizio }} → {{ $ferie->data_fine }}
+                                </div>
+
+                                <div class="text-sm text-gray-500">
+                                    {{ optional($ferie->dipendente)->nome }}
+                                    {{ optional($ferie->dipendente)->cognome }}
+                                </div>
                             </div>
 
-                            <div class="text-sm">
-                                Stato:
-
-                                <span class="
-                                    @if($ferie->stato === 'approvata') text-green-500
-                                    @elseif($ferie->stato === 'rifiutata') text-red-500
-                                    @else text-yellow-500
-                                    @endif
-                                ">
-                                    {{ $ferie->stato }}
-                                </span>
-                            </div>
+                            <span class="h-fit px-3 py-1 rounded-full text-white text-xs
+                                @if($ferie->stato === 'approvata') bg-green-500
+                                @elseif($ferie->stato === 'rifiutata') bg-red-500
+                                @else bg-yellow-500
+                                @endif">
+                                {{ $ferie->stato }}
+                            </span>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-gray-500">
+                            Nessuna ferie presente.
+                        </p>
+                    @endforelse
                 </div>
             </div>
 
         </div>
 
-        <div class="bg-white p-6 rounded shadow">
-            <h3 class="font-bold mb-4">
+        <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
+            <h3 class="font-bold text-gray-900 mb-4">
                 Statistiche ferie
             </h3>
 
@@ -122,7 +143,7 @@
                             '#ef4444',
                             '#eab308'
                         ],
-                        borderRadius: 8
+                        borderRadius: 10
                     }]
                 },
                 options: {
@@ -136,5 +157,15 @@
             });
         });
     </script>
-
+<script>
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Sistema notifiche attivo',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+</script>
 </x-app-layout>

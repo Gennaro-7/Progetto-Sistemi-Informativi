@@ -327,5 +327,68 @@ Route::put('/segnalazioni/{id}/stato', function (
     return back();
 
 })->middleware('auth')->name('segnalazioni.stato');
+Route::get('/documenti', function () {
+
+    $user = auth()->user();
+
+    if ($user->role === 'admin') {
+        $documenti = \App\Models\Documento::with('dipendente')
+            ->latest()
+            ->get();
+
+        $dipendenti = \App\Models\Dipendente::all();
+    } else {
+        $dipendente = \App\Models\Dipendente::where('user_id', $user->id)->first();
+
+        $documenti = \App\Models\Documento::where('dipendente_id', optional($dipendente)->id)
+            ->latest()
+            ->get();
+
+        $dipendenti = collect();
+    }
+
+    return view('documenti', compact('documenti', 'dipendenti'));
+
+})->middleware('auth')->name('documenti');
+
+
+Route::post('/documenti', function (\Illuminate\Http\Request $request) {
+
+    if (auth()->user()->role !== 'admin') {
+        abort(403);
+    }
+
+    $request->validate([
+        'dipendente_id' => 'required|exists:dipendenti,id',
+        'titolo' => 'required|string',
+        'file' => 'required|mimes:pdf|max:4096',
+    ]);
+
+    $path = $request->file('file')->store('documenti', 'public');
+
+    \App\Models\Documento::create([
+        'dipendente_id' => $request->dipendente_id,
+        'titolo' => $request->titolo,
+        'file' => $path,
+    ]);
+
+    return redirect()->route('documenti');
+
+})->middleware('auth')->name('documenti.store');
+Route::delete('/documenti/{id}', function ($id) {
+
+    if (auth()->user()->role !== 'admin') {
+        abort(403);
+    }
+
+    $documento = \App\Models\Documento::findOrFail($id);
+
+    \Storage::disk('public')->delete($documento->file);
+
+    $documento->delete();
+
+    return redirect()->route('documenti');
+
+})->middleware('auth')->name('documenti.delete');
 
 require __DIR__.'/auth.php';

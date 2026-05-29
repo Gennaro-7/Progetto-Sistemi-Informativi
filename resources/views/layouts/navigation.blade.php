@@ -7,10 +7,27 @@
             <div class="flex">
 
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-white" />
-                    </a>
-                </div>
+    <a href="{{ route('dashboard') }}"
+       class="flex items-center gap-3">
+
+        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow">
+            <span class="text-teal-500 font-bold text-lg">
+                PW
+            </span>
+        </div>
+
+        <div class="hidden md:block">
+            <div class="text-white font-bold text-lg leading-none">
+                PoliWork HR
+            </div>
+
+            <div class="text-teal-100 text-xs">
+                Sistema Gestione Personale
+            </div>
+        </div>
+
+    </a>
+</div>
 
                 <div class="hidden sm:flex sm:items-center sm:ms-10 space-x-6">
 
@@ -56,6 +73,10 @@
                             Storico Stipendi
                         </x-nav-link>
 
+                        <x-nav-link :href="route('documenti')" :active="request()->routeIs('documenti')">
+                            Documenti
+                        </x-nav-link>
+
                         <x-nav-link :href="route('convenzioni')" :active="request()->routeIs('convenzioni')">
                             Convenzioni
                         </x-nav-link>
@@ -93,6 +114,10 @@
 
                         <x-nav-link :href="route('stipendi')" :active="request()->routeIs('stipendi')">
                             Le mie buste paga
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('documenti')" :active="request()->routeIs('documenti')">
+                            I miei documenti
                         </x-nav-link>
 
                         <x-nav-link :href="route('segnalazioni')" :active="request()->routeIs('segnalazioni')">
@@ -164,6 +189,7 @@
             <a href="{{ route('stipendi') }}" class="block">Storico Stipendi</a>
             <a href="{{ route('convenzioni') }}" class="block">Convenzioni</a>
             <a href="{{ route('segnalazioni') }}" class="block">Segnalazioni / Reclami</a>
+            <a href="{{ route('documenti') }}" class="block">Documenti</a>
         @endif
 
         @if(Auth::user()->role === 'dipendente')
@@ -171,6 +197,7 @@
             <a href="{{ route('ferie') }}" class="block">Le mie ferie</a>
             <a href="{{ route('stipendi') }}" class="block">Le mie buste paga</a>
             <a href="{{ route('segnalazioni') }}" class="block">Segnalazioni</a>
+            <a href="{{ route('documenti') }}" class="block">I miei documenti</a>
         @endif
 
         <div class="border-t border-teal-300 pt-3 mt-3">
