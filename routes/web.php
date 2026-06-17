@@ -31,6 +31,8 @@ Route::get('/dashboard', function () {
         $ultimiTurni = \App\Models\Turno::with('dipendente')->latest()->take(5)->get();
         $ultimeFerie = \App\Models\Ferie::with('dipendente')->latest()->take(5)->get();
 
+        $totaleDocumenti = \App\Models\Documento::count();
+
     } else {
 
         $dipendente = \App\Models\Dipendente::where('user_id', $user->id)->first();
@@ -71,6 +73,7 @@ Route::get('/dashboard', function () {
         'ferieApprovate',
         'ferieRifiutate',
         'totaleStipendi',
+        'totaleDocumenti',
         'ultimiTurni',
         'ultimeFerie'
     ));
@@ -390,5 +393,24 @@ Route::delete('/documenti/{id}', function ($id) {
     return redirect()->route('documenti');
 
 })->middleware('auth')->name('documenti.delete');
+Route::put('/dipendenti/{id}', function (\Illuminate\Http\Request $request, $id) {
+
+    $dipendente = \App\Models\Dipendente::findOrFail($id);
+
+    $request->validate([
+        'nome' => 'required',
+        'cognome' => 'nullable',
+        'user_id' => 'nullable',
+    ]);
+
+    $dipendente->update([
+        'nome' => $request->nome,
+        'cognome' => $request->cognome,
+        'user_id' => $request->user_id ?: null,
+    ]);
+
+    return redirect()->route('dipendenti');
+
+})->middleware('auth')->name('dipendenti.update');
 
 require __DIR__.'/auth.php';
