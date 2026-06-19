@@ -56,4 +56,16 @@ class StipendioController extends Controller
 
         return redirect()->route('stipendi');
     }
+    public function destroy($id)
+{
+    $stipendio = Stipendio::findOrFail($id);
+
+    if ($stipendio->file && \Storage::disk('public')->exists($stipendio->file)) {
+        \Storage::disk('public')->delete($stipendio->file);
+    }
+
+    $stipendio->delete();
+
+    return back();
+}
 }

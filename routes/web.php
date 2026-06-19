@@ -9,6 +9,9 @@ use App\Models\Ferie;
 use App\Models\Dipendente;
 use App\Http\Controllers\DipendenteController;
 use App\Http\Controllers\StipendioController;
+use App\Http\Controllers\ConvenzioneController;
+use App\Http\Controllers\ProfiloDipendenteController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -98,13 +101,13 @@ Route::middleware('auth')->group(function () {
         return view('stipendi');
     })->name('stipendi');
 
-    Route::get('/convenzioni', function () {
-        return view('convenzioni');
-    })->name('convenzioni');
+    Route::get('/convenzioni', [ConvenzioneController::class, 'index'])->name('convenzioni');
+    Route::post('/convenzioni', [ConvenzioneController::class, 'store'])->name('convenzioni.store');
 
     Route::get('/segnalazioni', function () {
         return view('segnalazioni');
     })->name('segnalazioni');
+    
 });
 
 
@@ -125,6 +128,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/stipendi', [StipendioController::class, 'store'])->name('stipendi.store');
     Route::get('/stipendi/{stipendio}/download', [StipendioController::class, 'download'])->name('stipendi.download');
     Route::delete('/dipendenti/{dipendente}', [DipendenteController::class, 'destroy'])->name('dipendenti.destroy');
+    Route::delete('/convenzioni/{id}', [ConvenzioneController::class, 'destroy'])
+    ->name('convenzioni.destroy');
+    Route::delete('/stipendi/{id}', [StipendioController::class, 'destroy'])
+    ->name('stipendi.destroy');
+    Route::get('/dipendenti/{id}/profilo', [ProfiloDipendenteController::class, 'show'])
+    ->name('dipendenti.profilo');
 });
 Route::get('/calendar-events', function () {
 
@@ -375,7 +384,7 @@ Route::post('/documenti', function (\Illuminate\Http\Request $request) {
         'file' => $path,
     ]);
 
-    return redirect()->route('documenti');
+    return back()->with('success', 'Operazione completata con successo');
 
 })->middleware('auth')->name('documenti.store');
 Route::delete('/documenti/{id}', function ($id) {
@@ -390,7 +399,8 @@ Route::delete('/documenti/{id}', function ($id) {
 
     $documento->delete();
 
-    return redirect()->route('documenti');
+    return redirect()->route('documenti')
+    ->with('success', 'Documento eliminato con successo');
 
 })->middleware('auth')->name('documenti.delete');
 Route::put('/dipendenti/{id}', function (\Illuminate\Http\Request $request, $id) {
@@ -409,7 +419,8 @@ Route::put('/dipendenti/{id}', function (\Illuminate\Http\Request $request, $id)
         'user_id' => $request->user_id ?: null,
     ]);
 
-    return redirect()->route('dipendenti');
+    return redirect()->route('documenti')
+    ->with('success', 'Documento caricato con successo');
 
 })->middleware('auth')->name('dipendenti.update');
 

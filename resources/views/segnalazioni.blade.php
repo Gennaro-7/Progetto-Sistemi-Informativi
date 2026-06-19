@@ -5,24 +5,24 @@
         @if(auth()->user()->role === 'dipendente')
             <form method="POST"
                   action="{{ route('segnalazioni.store') }}"
-                  class="bg-white p-6 rounded shadow mb-6 space-y-4">
+                  class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md mb-6 space-y-4">
 
                 @csrf
 
                 <input type="text"
                        name="titolo"
                        placeholder="Titolo segnalazione"
-                       class="border rounded w-full p-2"
+                       class="border border-gray-300 rounded-lg w-full p-3"
                        required>
 
                 <textarea name="descrizione"
                           placeholder="Descrizione"
-                          class="border rounded w-full p-2"
+                          class="border border-gray-300 rounded-lg w-full p-3"
                           rows="5"
                           required></textarea>
 
                 <button type="submit"
-                        class="bg-blue-500 text-white px-4 py-2 rounded">
+                        class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg">
                     Invia Segnalazione
                 </button>
             </form>
@@ -31,61 +31,73 @@
         <div class="space-y-4">
 
             @foreach($segnalazioni as $s)
-                <div class="bg-white p-6 rounded shadow">
+                <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
 
-                    <div class="flex justify-between items-center mb-2">
+                    <div class="flex justify-between items-start gap-4 mb-3">
 
-                        <h3 class="font-bold text-lg">
-                            {{ $s->titolo }}
-                        </h3>
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900">
+                                {{ $s->titolo }}
+                            </h3>
 
-                        @if(auth()->user()->role === 'admin')
+                            <div class="text-sm text-gray-500 mt-1">
+                                {{ optional($s->dipendente)->nome }}
+                                {{ optional($s->dipendente)->cognome }}
 
-                            <form method="POST"
-                                  action="{{ route('segnalazioni.stato', $s->id) }}">
+                                @if($s->created_at)
+                                    • {{ $s->created_at->format('d/m/Y H:i') }}
+                                @endif
+                            </div>
+                        </div>
 
-                                @csrf
-                                @method('PUT')
+                        <div class="flex flex-col items-end gap-2">
 
-                                <select name="stato"
-                                        onchange="this.form.submit()"
-                                        class="border rounded px-2 py-1 text-sm">
+                            @if($s->stato === 'aperta')
+                                <span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs">
+                                    Aperta
+                                </span>
+                            @elseif($s->stato === 'in_lavorazione')
+                                <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs">
+                                    In lavorazione
+                                </span>
+                            @else
+                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs">
+                                    Chiusa
+                                </span>
+                            @endif
 
-                                    <option value="aperta" @selected($s->stato === 'aperta')>
-                                        Aperta
-                                    </option>
+                            @if(auth()->user()->role === 'admin')
+                                <form method="POST"
+                                      action="{{ route('segnalazioni.stato', $s->id) }}">
 
-                                    <option value="in lavorazione" @selected($s->stato === 'in lavorazione')>
-                                        In lavorazione
-                                    </option>
+                                    @csrf
+                                    @method('PUT')
 
-                                    <option value="chiusa" @selected($s->stato === 'chiusa')>
-                                        Chiusa
-                                    </option>
+                                    <select name="stato"
+                                            onchange="this.form.submit()"
+                                            class="border border-gray-300 rounded-lg px-2 py-1 text-sm">
 
-                                </select>
-                            </form>
+                                        <option value="aperta" @selected($s->stato === 'aperta')>
+                                            Aperta
+                                        </option>
 
-                        @else
+                                        <option value="in_lavorazione" @selected($s->stato === 'in_lavorazione')>
+                                            In lavorazione
+                                        </option>
 
-                            <span class="px-3 py-1 rounded text-white text-sm
-                                @if($s->stato === 'aperta') bg-red-500
-                                @elseif($s->stato === 'in lavorazione') bg-yellow-500
-                                @else bg-green-500
-                                @endif">
-                                {{ $s->stato }}
-                            </span>
+                                        <option value="chiusa" @selected($s->stato === 'chiusa')>
+                                            Chiusa
+                                        </option>
 
-                        @endif
+                                    </select>
+                                </form>
+                            @endif
+
+                        </div>
 
                     </div>
 
-                    <div class="text-sm text-gray-500 mb-3">
-                        {{ optional($s->dipendente)->nome }}
-                        {{ optional($s->dipendente)->cognome }}
-                    </div>
-
-                    <p>
+                    <p class="text-gray-700">
                         {{ $s->descrizione }}
                     </p>
 
@@ -95,4 +107,5 @@
         </div>
 
     </div>
+
 </x-app-layout>

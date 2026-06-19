@@ -75,6 +75,13 @@
 
     </button>
 
+ <div class="flex items-center gap-4">
+
+    <a href="{{ route('dipendenti.profilo', $dipendente->id) }}"
+       class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+        Profilo
+    </a>
+
     <form method="POST"
           action="{{ route('dipendenti.destroy', $dipendente->id) }}">
 
@@ -87,6 +94,8 @@
         </button>
 
     </form>
+
+</div>
 
 </div>
 

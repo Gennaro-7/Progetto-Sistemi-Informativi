@@ -64,18 +64,23 @@
                 Elenco documenti
             </h3>
 
+            <input type="text"
+       id="searchDocumenti"
+       placeholder="🔍 Cerca documento..."
+       class="w-full border border-gray-300 rounded-lg p-3 mb-4">
+
             <div class="space-y-4">
 
                 @forelse($documenti as $documento)
 
-                    <div class="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
+                    <div class="documento-item border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
 
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 
                             <div>
-                                <div class="font-semibold text-gray-900">
-                                    {{ $documento->titolo }}
-                                </div>
+                                <div class="font-semibold text-gray-900 documento-titolo">
+    {{ $documento->titolo }}
+</div>
 
                                 @if(auth()->user()->role === 'admin')
                                     <div class="text-sm text-gray-500">
@@ -96,8 +101,8 @@
                                 @if(auth()->user()->role === 'admin')
 
                                     <form method="POST"
-                                          action="{{ route('documenti.delete', $documento->id) }}"
-                                          onsubmit="return confirm('Eliminare il documento?')">
+                                            action="{{ route('documenti.delete', $documento->id) }}"
+                                            class="delete-form-documento">
 
                                         @csrf
                                         @method('DELETE')
@@ -130,5 +135,51 @@
         </div>
 
     </div>
+<script>
+document.querySelectorAll('.delete-form-documento').forEach(form => {
 
+    form.addEventListener('submit', function(e) {
+
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Sei sicuro?',
+            text: 'Il documento verrà eliminato definitivamente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Sì, elimina',
+            cancelButtonText: 'Annulla'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                form.submit();
+            }
+
+        });
+
+    });
+
+});
+</script>
+<script>
+document.getElementById('searchDocumenti')
+    .addEventListener('keyup', function () {
+
+    let filtro = this.value.toLowerCase();
+
+    document.querySelectorAll('.documento-item').forEach(item => {
+
+        let titolo = item.querySelector('.documento-titolo')
+                         .textContent
+                         .toLowerCase();
+
+        item.style.display =
+            titolo.includes(filtro) ? '' : 'none';
+
+    });
+
+});
+</script>
 </x-app-layout>
