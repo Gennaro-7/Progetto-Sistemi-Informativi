@@ -9,10 +9,11 @@ class Dipendente extends Model
     protected $table = 'dipendenti';
 
     protected $fillable = [
-        'nome',
-        'cognome',
-        'user_id',
-    ];
+    'nome',
+    'cognome',
+    'user_id',
+    'foto',
+];
 
     public function user()
     {

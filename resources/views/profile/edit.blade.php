@@ -7,6 +7,11 @@
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </div>
+            <div class="p-4 sm:p-8 bg-white shadow-md border border-gray-200 sm:rounded-2xl">
+    <div class="max-w-xl">
+        @include('profile.update-profile-photo-form')
+    </div>
+</div>
 
             <div class="p-4 sm:p-8 bg-white shadow-md border border-gray-200 sm:rounded-2xl">
     <div class="max-w-xl">

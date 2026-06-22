@@ -6,9 +6,14 @@
 
             <div class="flex items-center gap-6 mb-8">
 
-                <div class="w-24 h-24 rounded-full bg-teal-500 flex items-center justify-center text-white text-3xl font-bold">
-                    {{ strtoupper(substr($dipendente->nome, 0, 1)) }}
-                </div>
+                @if($dipendente->foto)
+    <img src="{{ asset('storage/'.$dipendente->foto) }}"
+         class="w-24 h-24 rounded-full object-cover border">
+@else
+    <div class="w-24 h-24 rounded-full bg-teal-500 flex items-center justify-center text-white text-3xl font-bold">
+        {{ strtoupper(substr($dipendente->nome, 0, 1)) }}
+    </div>
+@endif
 
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900">

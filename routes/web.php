@@ -58,6 +58,8 @@ Route::get('/dashboard', function () {
 
         $totaleStipendi = \App\Models\Stipendio::where('dipendente_id', optional($dipendente)->id)->count();
 
+        $totaleDocumenti = \App\Models\Documento::where('dipendente_id', optional($dipendente)->id)->count();
+
         $ultimiTurni = \App\Models\Turno::where('dipendente_id', optional($dipendente)->id)
             ->latest()
             ->take(5)
@@ -423,5 +425,31 @@ Route::put('/dipendenti/{id}', function (\Illuminate\Http\Request $request, $id)
     ->with('success', 'Documento caricato con successo');
 
 })->middleware('auth')->name('dipendenti.update');
+
+Route::post('/profile/photo', function (\Illuminate\Http\Request $request) {
+
+    $request->validate([
+        'foto' => 'required|image|max:2048',
+    ]);
+
+    $dipendente = \App\Models\Dipendente::where('user_id', auth()->id())->first();
+
+    if (!$dipendente) {
+        return back()->with('error', 'Nessun dipendente collegato al tuo account');
+    }
+
+    if ($dipendente->foto) {
+        \Storage::disk('public')->delete($dipendente->foto);
+    }
+
+    $path = $request->file('foto')->store('foto-profili', 'public');
+
+    $dipendente->update([
+        'foto' => $path,
+    ]);
+
+    return back()->with('success', 'Foto profilo aggiornata con successo');
+
+})->middleware('auth')->name('profile.photo');
 
 require __DIR__.'/auth.php';
