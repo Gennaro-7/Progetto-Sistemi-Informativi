@@ -54,13 +54,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (data.success) {
 
-                    alert('Turno creato');
+                    Swal.fire({
+                                icon: 'success',
+                                title: 'Turno creato',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
 
                     calendar.refetchEvents();
 
                 } else {
 
-                    alert('Errore');
+                    Swal.fire({
+                                icon: 'error',
+                                title: 'Errore',
+                                text: 'Si è verificato un problema.'
+                            });
 
                 }
 
