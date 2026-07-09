@@ -1,20 +1,22 @@
 <x-app-layout>
 
-    <div class="p-6 space-y-6">
+<div class="p-6 space-y-6">
+    <div>
+        <h1 class="text-2xl font-medium text-teal-600">
+            Documenti
+        </h1>
 
-        <div>
-            <h1 class="text-2xl font-bold text-teal-600">
-                Documenti
-            </h1>
-
-            <p class="text-gray-600">
-                Archivio documentale dipendenti
-            </p>
-        </div>
+        <p class="text-gray-600">
+            Archivio documentale dipendenti
+        </p>
+    </div>
 
         @if(auth()->user()->role === 'admin')
 
             <div class="bg-white border border-gray-200 rounded-2xl shadow-md p-6">
+                <h2 class="text-xl font-bold text-teal-600 mb-4">
+    Carica nuovo documento
+</h2>
 
                 <form method="POST"
                       action="{{ route('documenti.store') }}"
@@ -92,31 +94,40 @@
 
                             <div class="flex gap-2">
 
-                                <a href="{{ asset('storage/'.$documento->file) }}"
-                                   target="_blank"
-                                   class="bg-blue-500 text-white px-3 py-1 rounded">
-                                    Apri PDF
-                                </a>
+    <a href="{{ asset('storage/'.$documento->file) }}"
+       target="_blank"
+       class="w-28 text-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
+        Apri PDF
+    </a>
 
-                                @if(auth()->user()->role === 'admin')
+    @if(auth()->user()->role === 'admin')
 
-                                    <form method="POST"
-                                            action="{{ route('documenti.delete', $documento->id) }}"
-                                            class="delete-form-documento">
+        <button
+            onclick="openDocumentoModal(
+                {{ $documento->id }},
+                '{{ addslashes($documento->titolo) }}'
+            )"
+            class="w-28 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm">
+            Modifica
+        </button>
 
-                                        @csrf
-                                        @method('DELETE')
+        <form method="POST"
+              action="{{ route('documenti.delete', $documento->id) }}"
+              class="delete-form-documento">
 
-                                        <button type="submit"
-                                                class="bg-red-500 text-white px-3 py-1 rounded">
-                                            Elimina
-                                        </button>
+            @csrf
+            @method('DELETE')
 
-                                    </form>
+            <button type="submit"
+                    class="w-28 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm">
+                Elimina
+            </button>
 
-                                @endif
+        </form>
 
-                            </div>
+    @endif
+
+</div>
 
                         </div>
 
@@ -181,5 +192,55 @@ document.getElementById('searchDocumenti')
     });
 
 });
+</script>
+<div id="documentoModal"
+     class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+
+    <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md">
+
+        <h2 class="text-xl font-bold mb-4 text-gray-900">
+            Modifica documento
+        </h2>
+
+        <form id="documentoForm" method="POST">
+            @csrf
+            @method('PUT')
+
+            <input type="text"
+                   id="documentoTitolo"
+                   name="titolo"
+                   class="border border-gray-300 rounded-lg p-3 w-full mb-4"
+                   required>
+
+            <div class="flex justify-end gap-2">
+                <button type="button"
+                        onclick="closeDocumentoModal()"
+                        class="bg-gray-300 px-4 py-2 rounded-lg">
+                    Annulla
+                </button>
+
+                <button type="submit"
+                        class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg">
+                    Salva
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+function openDocumentoModal(id, titolo) {
+    document.getElementById('documentoForm').action = '/documenti/' + id;
+    document.getElementById('documentoTitolo').value = titolo;
+
+    document.getElementById('documentoModal').classList.remove('hidden');
+    document.getElementById('documentoModal').classList.add('flex');
+}
+
+function closeDocumentoModal() {
+    document.getElementById('documentoModal').classList.add('hidden');
+    document.getElementById('documentoModal').classList.remove('flex');
+}
 </script>
 </x-app-layout>

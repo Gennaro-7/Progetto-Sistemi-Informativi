@@ -70,7 +70,7 @@
                             </div>
 
                             <div class="text-sm text-gray-500">
-                                {{ $turno->data }}
+                                {{ \Carbon\Carbon::parse($turno->data)->format('d/m/Y') }}
                             </div>
                         </div>
                     @empty
@@ -91,7 +91,7 @@
                         <div class="flex justify-between border-b border-gray-100 pb-3">
                             <div>
                                 <div class="font-semibold text-gray-900">
-                                    {{ $ferie->data_inizio }} → {{ $ferie->data_fine }}
+                                     {{ \Carbon\Carbon::parse($ferie->data_inizio)->format('d/m/Y') }} → {{ \Carbon\Carbon::parse($ferie->data_fine)->format('d/m/Y') }}
                                 </div>
 
                                 <div class="text-sm text-gray-500">
@@ -105,7 +105,7 @@
                                 @elseif($ferie->stato === 'rifiutata') bg-red-500
                                 @else bg-yellow-500
                                 @endif">
-                                {{ $ferie->stato }}
+                                {{ $ferie->stato === 'in_attesa' ? 'In attesa' : ucfirst($ferie->stato) }}
                             </span>
                         </div>
                     @empty

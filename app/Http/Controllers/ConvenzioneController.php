@@ -33,4 +33,28 @@ class ConvenzioneController extends Controller
 
         return back()->with('success', 'Convenzione aggiunta con successo');
     }
+
+    public function edit($id)
+{
+    $convenzione = Convenzione::findOrFail($id);
+
+    return view('modifica-convenzione', compact('convenzione'));
+}
+
+public function update(Request $request, $id)
+{
+    $convenzione = Convenzione::findOrFail($id);
+
+    $convenzione->update([
+        'titolo' => $request->titolo,
+        'descrizione' => $request->descrizione,
+        'azienda' => $request->azienda,
+        'sconto' => $request->sconto,
+        'link' => $request->link,
+    ]);
+
+    return redirect()
+        ->route('convenzioni')
+        ->with('success', 'Convenzione aggiornata con successo');
+}
 }

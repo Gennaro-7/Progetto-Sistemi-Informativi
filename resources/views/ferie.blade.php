@@ -1,9 +1,10 @@
 <x-app-layout>
 @if(auth()->user()->role === 'admin')
-    <div class="px-6 py-4 bg-white border-b">
-        <h2 class="font-semibold text-xl">
-            Gestione Ferie
-        </h2>
+    <div class="p-6 space-y-6">
+    <div>
+        <h1 class="text-2xl font-medium text-teal-600">
+            Gestione ferie
+        </h1>
     </div>
 @endif
     <div class="p-6">
@@ -33,11 +34,29 @@
                     </strong>
 
                     <div>
-                        Dal {{ $f->data_inizio }} al {{ $f->data_fine }}
+                        Dal {{ \Carbon\Carbon::parse($f->data_inizio)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($f->data_fine)->format('d/m/Y') }}
                     </div>
 
                     <div>
-                        Stato: {{ $f->stato }}
+                    <div class="mt-2">
+    Stato:
+
+    @if($f->stato == 'approvata')
+        <span class="bg-green-500 text-white px-3 py-1.5 rounded-full text-sm font-medium">
+            Approvata
+        </span>
+
+    @elseif($f->stato == 'rifiutata')
+        <span class="bg-red-500 text-white px-3 py-1.5 rounded-full text-sm font-medium">
+            Rifiutata
+        </span>
+
+    @else
+        <span class="bg-yellow-500 text-white px-3 py-1.5 rounded-full text-sm font-medium">
+            In attesa
+        </span>
+    @endif
+</div>
                     </div>
 
                     <div>
@@ -65,10 +84,48 @@
                             </form>
                         </div>
                     @endif
+                    @if(Auth::user()->role === 'dipendente' && $f->stato === 'in_attesa')
+    <div class="mt-3">
+        <form method="POST"
+              action="{{ route('ferie.destroy', $f->id) }}"
+              class="delete-form-ferie">
+
+            @csrf
+            @method('DELETE')
+
+            <button type="submit"
+                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                Annulla richiesta
+            </button>
+        </form>
+    </div>
+@endif
 
                 </div>
             @endforeach
         </div>
 
     </div>
+    <script>
+document.querySelectorAll('.delete-form-ferie').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Sei sicuro?',
+            text: 'La richiesta ferie verrà annullata.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Sì, annulla',
+            cancelButtonText: 'Indietro'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+</script>
 </x-app-layout>

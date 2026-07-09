@@ -45,7 +45,9 @@ class DipendenteController extends Controller
     if (auth()->user()->role !== 'admin') {
         abort(403);
     }
-
+    \App\Models\Turno::where('dipendente_id', $dipendente->id)->delete();
+    \App\Models\Ferie::where('dipendente_id', $dipendente->id)->delete();
+    
     $dipendente->delete();
 
     return redirect()->route('dipendenti');

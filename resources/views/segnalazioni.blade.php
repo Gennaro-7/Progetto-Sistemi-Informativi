@@ -1,5 +1,16 @@
 <x-app-layout>
 
+<div class="p-6 space-y-6">
+    <div>
+        <h1 class="text-2xl font-medium text-teal-600">
+            Segnalazioni / Reclami
+        </h1>
+
+        <p class="text-gray-600">
+            Gestisci le segnalazioni inviate dai dipendenti
+        </p>
+    </div>
+    
     <div class="p-6">
 
         @if(auth()->user()->role === 'dipendente')
@@ -29,7 +40,9 @@
         @endif
 
         <div class="space-y-4">
-
+<h2 class="text-xl font-bold text-teal-600 mb-4">
+    Elenco segnalazioni
+</h2>
             @foreach($segnalazioni as $s)
                 <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
 
@@ -50,7 +63,7 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col items-end gap-2">
+                        <div class="flex flex-col items-end gap-2 space-y-3">
 
                             @if($s->stato === 'aperta')
                                 <span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs">
@@ -90,7 +103,20 @@
                                         </option>
 
                                     </select>
-                                </form>
+                                    </form>
+<form method="POST"
+      action="{{ route('segnalazioni.destroy', $s->id) }}"
+      class="delete-form-segnalazione">
+
+    @csrf
+    @method('DELETE')
+
+    <button type="submit"
+            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm">
+        Elimina
+    </button>
+</form>
+                            
                             @endif
 
                         </div>
@@ -107,5 +133,26 @@
         </div>
 
     </div>
+<script>
+document.querySelectorAll('form.delete-form-segnalazione').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
+        Swal.fire({
+            title: 'Sei sicuro?',
+            text: 'La segnalazione verrà eliminata definitivamente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Sì, elimina',
+            cancelButtonText: 'Annulla'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+</script>
 </x-app-layout>

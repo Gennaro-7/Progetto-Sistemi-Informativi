@@ -91,4 +91,24 @@ public function rifiuta(Ferie $ferie)
 
     return redirect()->route('ferie');
 }
+public function destroy(Ferie $ferie)
+{
+    if (auth()->user()->role !== 'dipendente') {
+        abort(403);
+    }
+
+    if ($ferie->stato !== 'in_attesa') {
+        return back();
+    }
+
+    $dipendente = Dipendente::where('user_id', auth()->id())->first();
+
+    if ($ferie->dipendente_id != optional($dipendente)->id) {
+        abort(403);
+    }
+
+    $ferie->delete();
+
+    return back()->with('success', 'Richiesta ferie annullata.');
+}
 }

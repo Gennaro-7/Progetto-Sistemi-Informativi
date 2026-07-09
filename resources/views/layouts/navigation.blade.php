@@ -1,13 +1,13 @@
 <nav x-data="{ open: false, calOpen: false }"
      class="bg-teal-500 border-b border-teal-600">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+    <div class="w-full px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
 
             <div class="flex">
 
                 <div class="shrink-0 flex items-center">
-    <a href="{{ route('dashboard') }}"
+    <a href="{{ route('home') }}"
        class="flex items-center gap-3">
 
         <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow">
@@ -29,7 +29,7 @@
     </a>
 </div>
 
-                <div class="hidden sm:flex sm:items-center sm:ms-10 space-x-6">
+                <div class="hidden sm:flex sm:items-center sm:ms-8 gap-6">
 
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         Dashboard
@@ -99,6 +99,10 @@
                                 </span>
                             @endif
                         </a>
+                        <x-nav-link :href="route('valutazioni')"
+            :active="request()->routeIs('valutazioni')">
+    Valutazioni
+</x-nav-link>
 
                     @endif
 
@@ -118,6 +122,10 @@
 
                         <x-nav-link :href="route('documenti')" :active="request()->routeIs('documenti')">
                             I miei documenti
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('mie-valutazioni')" :active="request()->routeIs('mie-valutazioni')">
+                            Le mie valutazioni
                         </x-nav-link>
 
                         <x-nav-link :href="route('segnalazioni')" :active="request()->routeIs('segnalazioni')">
@@ -179,7 +187,7 @@
 
     <div x-show="open" class="sm:hidden px-4 pb-4 space-y-2 bg-teal-500 text-white">
 
-        <a href="{{ route('dashboard') }}" class="block">Dashboard</a>
+        <a href="{{ route('home') }}" class="block">Dashboard</a>
 
         @if(Auth::user()->role === 'admin')
             <a href="{{ route('dipendenti') }}" class="block">Dipendenti</a>

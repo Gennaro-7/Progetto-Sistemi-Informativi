@@ -11,7 +11,9 @@
         @if(auth()->user()->role === 'admin')
 
             <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-md">
-
+<h2 class="text-xl font-bold text-teal-600 mb-4">
+    Aggiungi nuova convenzione
+</h2>
                 <form method="POST"
                       action="{{ route('convenzioni.store') }}"
                       class="space-y-4">
@@ -78,9 +80,9 @@
                         @endif
 
                         @if($c->sconto)
-                            <div class="text-green-600 font-medium mt-1">
-                                Sconto: {{ $c->sconto }}%
-                            </div>
+                            <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+    {{ $c->sconto }}% di sconto
+</span>
                         @endif
 
                         <p class="text-gray-700 mt-2">
@@ -92,11 +94,14 @@
     @if($c->link)
         <a href="{{ $c->link }}"
            target="_blank"
-           class="bg-teal-500 hover:bg-teal-600 text-white px-3 py-2 rounded-lg text-sm">
-            Apri convenzione
+           class="bg-blue-500 hover:bg-teal-600 text-white px-3 py-2 rounded-lg text-sm">
+            Apri sito
         </a>
     @endif
-
+<a href="{{ route('convenzioni.edit', $c->id) }}"
+   class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm">
+    Modifica
+</a>
     @if(auth()->user()->role === 'admin')
         <form action="{{ route('convenzioni.destroy', $c->id) }}"
       method="POST"
@@ -108,6 +113,7 @@
             class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm">
         Elimina
     </button>
+  
 </form>
     @endif
 

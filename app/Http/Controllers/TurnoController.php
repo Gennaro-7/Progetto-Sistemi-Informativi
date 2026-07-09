@@ -72,7 +72,7 @@ class TurnoController extends Controller
             abort(403);
         }
 
-        return view('turni-edit', compact('turno'));
+        return redirect()->route('turni');
     }
 
     public function update(Request $request, Turno $turno)

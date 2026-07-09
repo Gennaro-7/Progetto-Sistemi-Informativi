@@ -1,9 +1,10 @@
 <x-app-layout>
 @if(auth()->user()->role === 'admin')
-    <div class="px-6 py-4 bg-white border-b">
-        <h2 class="font-semibold text-xl">
+    <div class="p-6 space-y-6">
+    <div>
+        <h1 class="text-2xl font-medium text-teal-600">
             Calendario completo
-        </h2>
+        </h1>
     </div>
 @endif
     <div class="p-6">
@@ -69,7 +70,7 @@
 
             <div class="flex justify-end gap-2">
                 <button onclick="closeModal()" class="bg-gray-300 px-4 py-2 rounded">Annulla</button>
-                <button onclick="saveTurno()" class="bg-blue-500 text-white px-4 py-2 rounded">Salva</button>
+                <button onclick="saveTurno()" class="bg-teal-500 text-white px-4 py-2 rounded">Salva</button>
             </div>
         </div>
     </div>
@@ -100,7 +101,7 @@
                         Annulla
                     </button>
 
-                    <button onclick="updateTurno()" class="bg-blue-500 text-white px-4 py-2 rounded">
+                    <button onclick="updateTurno()" class="bg-teal-500 text-white px-4 py-2 rounded">
                         Salva
                     </button>
                 </div>
@@ -235,9 +236,20 @@ document.getElementById('dipendenteFiltro')
         }
 
         function deleteTurno() {
-            const id = document.getElementById('editTurnoId').value;
+    const id = document.getElementById('editTurnoId').value;
 
-            if (!confirm('Eliminare turno?')) return;
+    Swal.fire({
+        title: 'Eliminare turno?',
+        text: 'Questa operazione non può essere annullata.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Sì, elimina',
+        cancelButtonText: 'Annulla'
+    }).then((result) => {
+
+        if (result.isConfirmed) {
 
             fetch('/calendar-delete-turno/' + id, {
                 method: 'DELETE',
@@ -249,7 +261,18 @@ document.getElementById('dipendenteFiltro')
             .then(data => {
                 closeEditModal();
                 calendar.refetchEvents();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Turno eliminato',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
             });
+
         }
+
+    });
+}
     </script>
 </x-app-layout>

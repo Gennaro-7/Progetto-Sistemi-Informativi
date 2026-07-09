@@ -11,6 +11,7 @@ use App\Http\Controllers\DipendenteController;
 use App\Http\Controllers\StipendioController;
 use App\Http\Controllers\ConvenzioneController;
 use App\Http\Controllers\ProfiloDipendenteController;
+use App\Http\Controllers\ValutazioneController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -136,6 +137,25 @@ Route::middleware('auth')->group(function () {
     ->name('stipendi.destroy');
     Route::get('/dipendenti/{id}/profilo', [ProfiloDipendenteController::class, 'show'])
     ->name('dipendenti.profilo');
+    Route::get('/convenzioni/{id}/edit', [ConvenzioneController::class, 'edit'])
+    ->name('convenzioni.edit');
+    Route::put('/convenzioni/{id}', [ConvenzioneController::class, 'update'])
+    ->name('convenzioni.update');
+    Route::put('/stipendi/{id}', [StipendioController::class, 'update'])
+    ->name('stipendi.update');
+    Route::delete('/ferie/{ferie}', [FerieController::class, 'destroy'])
+    ->name('ferie.destroy');
+    Route::get('/valutazioni', [ValutazioneController::class, 'index'])
+    ->name('valutazioni');
+    Route::post('/valutazioni', [ValutazioneController::class, 'store'])
+    ->name('valutazioni.store');
+    Route::put('/valutazioni/{id}', [ValutazioneController::class, 'update'])
+    ->name('valutazioni.update');
+    Route::delete('/valutazioni/{id}', [ValutazioneController::class, 'destroy'])
+    ->name('valutazioni.destroy');
+    Route::get('/home', function () {
+    return view('home');
+})->middleware(['auth'])->name('home');
 });
 Route::get('/calendar-events', function () {
 
@@ -146,7 +166,8 @@ Route::get('/calendar-events', function () {
 
     if ($tipo === 'tutti' || $tipo === 'turni') {
 
-        $turni = \App\Models\Turno::with('dipendente');
+       $turni = \App\Models\Turno::with('dipendente')
+                ->whereHas('dipendente');
 
         if ($dipendenteFiltro !== 'tutti') {
             $turni->where('dipendente_id', $dipendenteFiltro);
@@ -183,7 +204,8 @@ Route::get('/calendar-events', function () {
     if ($tipo === 'tutti' || $tipo === 'ferie') {
 
         $ferie = \App\Models\Ferie::with('dipendente')
-            ->where('stato', 'approvata');
+                ->whereHas('dipendente')
+                ->where('stato', 'approvata');
 
         if ($dipendenteFiltro !== 'tutti') {
             $ferie->where('dipendente_id', $dipendenteFiltro);
@@ -341,6 +363,15 @@ Route::put('/segnalazioni/{id}/stato', function (
     return back();
 
 })->middleware('auth')->name('segnalazioni.stato');
+
+Route::delete('/segnalazioni/{id}', function ($id) {
+
+    \App\Models\Segnalazione::findOrFail($id)->delete();
+
+    return back()->with('success', 'Segnalazione eliminata con successo');
+
+})->middleware('auth')->name('segnalazioni.destroy');
+
 Route::get('/documenti', function () {
 
     $user = auth()->user();
@@ -451,5 +482,33 @@ Route::post('/profile/photo', function (\Illuminate\Http\Request $request) {
     return back()->with('success', 'Foto profilo aggiornata con successo');
 
 })->middleware('auth')->name('profile.photo');
+Route::put('/documenti/{id}', function (
+    \Illuminate\Http\Request $request,
+    $id
+) {
 
+    $documento = \App\Models\Documento::findOrFail($id);
+
+    $documento->update([
+        'titolo' => $request->titolo
+    ]);
+
+    return back()->with(
+        'success',
+        'Documento aggiornato con successo'
+    );
+
+})->middleware('auth')->name('documenti.update');
+
+Route::get('/mie-valutazioni', function () {
+
+    $dipendente = \App\Models\Dipendente::where('user_id', auth()->id())->first();
+
+    $valutazioni = $dipendente
+        ? \App\Models\Valutazione::where('dipendente_id', $dipendente->id)->latest()->get()
+        : collect();
+
+    return view('mie-valutazioni', compact('valutazioni'));
+
+})->middleware('auth')->name('mie-valutazioni');
 require __DIR__.'/auth.php';

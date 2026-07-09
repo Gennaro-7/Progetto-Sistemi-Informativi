@@ -68,4 +68,19 @@ class StipendioController extends Controller
 
     return back();
 }
+public function update(Request $request, $id)
+{
+    $stipendio = Stipendio::findOrFail($id);
+
+    $stipendio->update([
+        'mese' => $request->mese,
+        'anno' => $request->anno,
+    ]);
+
+    return back()->with('success', 'Busta paga aggiornata con successo');
+}
+public function download(Stipendio $stipendio)
+{
+    return \Storage::disk('public')->download($stipendio->file);
+}
 }

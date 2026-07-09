@@ -26,81 +26,104 @@
                 @endforeach
             </select>
 
-            <button class="bg-blue-500 text-white px-4 py-2 rounded">
+            <button class="bg-teal-500 text-white px-4 py-2 rounded">
                 Salva Dipendente
             </button>
+            
         </form>
+<h2 class="text-xl font-bold text-teal-600 mb-4">
+    Elenco dipendenti
+</h2>
+       @foreach($dipendenti as $dipendente)
 
-        @foreach($dipendenti as $dipendente)
-    <div class="dipendente-card border border-gray-200 p-5 mb-4 rounded-2xl shadow-sm flex justify-between items-center bg-white">
+    <div class="dipendente-card bg-white border border-gray-200 rounded-2xl shadow-sm p-5 mb-4">
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+            <div class="flex items-center gap-4">
+
+                @if($dipendente->foto)
+                    <img src="{{ asset('storage/'.$dipendente->foto) }}"
+                         class="w-16 h-16 rounded-full object-cover border flex-shrink-0">
+                @else
+                    <div class="w-16 h-16 rounded-full bg-teal-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                        {{ strtoupper(substr($dipendente->nome, 0, 1)) }}
+                    </div>
+                @endif
 
                 <div>
+                    <div class="font-bold text-lg text-gray-900">
+                        {{ $dipendente->nome }} {{ $dipendente->cognome }}
+                    </div>
 
-    <div class="font-bold text-lg text-gray-900">
-        👤 {{ $dipendente->nome }} {{ $dipendente->cognome }}
-    </div>
+                    <div class="text-sm text-gray-500">
+                        ID {{ $dipendente->id }}
+                    </div>
 
-    <div class="text-sm text-gray-600 mt-1">
-        🆔 ID {{ $dipendente->id }}
-    </div>
-
-    <div class="text-sm text-gray-600">
-        📧 {{ optional($dipendente->user)->email ?? 'Nessun account collegato' }}
-    </div>
-
-    <div class="text-sm text-gray-600">
-        📄 Documenti:
-        {{ \App\Models\Documento::where('dipendente_id', $dipendente->id)->count() }}
-    </div>
-
-    <div class="text-sm text-gray-600">
-        📅 Ferie:
-        {{ \App\Models\Ferie::where('dipendente_id', $dipendente->id)->count() }}
-    </div>
-
-</div>
-
-                <div class="flex items-center gap-3">
-
-    <button
-        onclick="openEditModal(
-            {{ $dipendente->id }},
-            '{{ $dipendente->nome }}',
-            '{{ $dipendente->cognome }}',
-            '{{ $dipendente->user_id }}'
-        )"
-        class="text-blue-500 hover:text-blue-700 text-xl">
-
-        ✏️
-
-    </button>
-
- <div class="flex items-center gap-4">
-
-    <a href="{{ route('dipendenti.profilo', $dipendente->id) }}"
-       class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
-        Profilo
-    </a>
-
-    <form method="POST"
-          action="{{ route('dipendenti.destroy', $dipendente->id) }}">
-
-        @csrf
-        @method('DELETE')
-
-        <button onclick="return confirm('Eliminare dipendente?')"
-                class="text-red-500 hover:text-red-700 text-xl">
-            🗑️
-        </button>
-
-    </form>
-
-</div>
-
-</div>
+                    <div class="text-sm text-gray-600">
+                        {{ optional($dipendente->user)->email ?? 'Nessun account collegato' }}
+                    </div>
+                </div>
 
             </div>
-        @endforeach
+
+            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+
+                <div>
+                    📄 Documenti:
+                    <span class="font-semibold">
+                        {{ \App\Models\Documento::where('dipendente_id', $dipendente->id)->count() }}
+                    </span>
+                </div>
+
+                <div>
+                    📅 Ferie:
+                    <span class="font-semibold">
+                        {{ \App\Models\Ferie::where('dipendente_id', $dipendente->id)->count() }}
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-2">
+
+                <a href="{{ route('dipendenti.profilo', $dipendente->id) }}"
+                   class="w-24 text-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
+                    Profilo
+                </a>
+
+                <button
+                    onclick="openEditModal(
+                        {{ $dipendente->id }},
+                        '{{ $dipendente->nome }}',
+                        '{{ $dipendente->cognome }}',
+                        '{{ $dipendente->user_id }}'
+                    )"
+                    class="w-24 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm">
+                    Modifica
+                </button>
+
+                <form method="POST"
+      action="{{ route('dipendenti.destroy', $dipendente->id) }}"
+      class="delete-form-dipendente">
+
+    @csrf
+    @method('DELETE')
+
+    <button type="submit"
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
+        Elimina
+    </button>
+
+</form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+@endforeach
 
     </div>
     <script>
@@ -197,5 +220,31 @@ function closeEditModal() {
     document.getElementById('editModal').classList.add('hidden');
     document.getElementById('editModal').classList.remove('flex');
 }
+</script>
+<script>
+document.querySelectorAll('.delete-form-dipendente').forEach(form => {
+
+    form.addEventListener('submit', function(e) {
+
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Sei sicuro?',
+            text: 'Il dipendente verrà eliminato definitivamente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Sì, elimina',
+            cancelButtonText: 'Annulla'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+
+    });
+
+});
 </script>
 </x-app-layout>

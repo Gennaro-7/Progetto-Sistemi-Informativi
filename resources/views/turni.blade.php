@@ -1,9 +1,10 @@
 <x-app-layout>
     @if(auth()->user()->role === 'admin')
-    <div class="px-6 py-4 bg-white border-b">
-        <h2 class="font-semibold text-xl">
-            Gestione Turni
-        </h2>
+    <div class="p-6 space-y-6">
+    <div>
+        <h1 class="text-2xl font-medium text-teal-600">
+            Gestione turni
+        </h1>
     </div>
 @endif
 
@@ -43,6 +44,10 @@
 
         @if(Auth::user()->role === 'admin')
             <!-- FORM ADMIN -->
+
+            <h2 class="text-xl font-bold text-teal-600 mb-4">
+            Assegna nuovo turno
+        </h2>
             <form method="POST" action="{{ route('turni.store') }}" class="space-y-4 mb-8">
                 @csrf
 
@@ -66,7 +71,7 @@
 
                 <textarea name="note" placeholder="Note" class="border p-2 w-full"></textarea>
 
-                <button class="bg-blue-500 text-white px-4 py-2">
+                <button class="bg-teal-500 text-white px-4 py-2">
                     Salva Turno
                 </button>
             </form>
@@ -78,19 +83,10 @@
                 <div class="border p-2 mb-2 flex justify-between items-center">
 
                     <div>
-                        <strong>{{ $turno->data }}</strong> -
+                        <strong>{{ \Carbon\Carbon::parse($turno->data)->format('d/m/Y') }}</strong> -
                         {{ $turno->turno }} -
                         {{ optional($turno->dipendente)->nome }} {{ optional($turno->dipendente)->cognome }}
                     </div>
-
-                    @if(Auth::user()->role === 'admin')
-                        <div>
-                            <a href="{{ route('turni.edit', $turno->id) }}"
-                               class="text-blue-600 ml-2">
-                                Modifica
-                            </a>
-                        </div>
-                    @endif
 
                 </div>
             @endforeach
