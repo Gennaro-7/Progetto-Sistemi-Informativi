@@ -47,4 +47,8 @@ protected $fillable = [
             'password' => 'hashed',
         ];
     }
+    public function dipendente()
+{
+    return $this->hasOne(Dipendente::class);
+}
 }
