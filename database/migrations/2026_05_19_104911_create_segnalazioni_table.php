@@ -10,12 +10,22 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
+{
+    if (!Schema::hasTable('segnalazioni')) {
         Schema::create('segnalazioni', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('dipendente_id')
+                ->nullable()
+                ->constrained('dipendenti')
+                ->nullOnDelete();
+
+            $table->string('titolo');
+            $table->text('descrizione');
+            $table->string('stato')->default('aperta');
             $table->timestamps();
         });
     }
+}
 
     /**
      * Reverse the migrations.

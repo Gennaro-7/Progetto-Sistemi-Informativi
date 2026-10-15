@@ -10,11 +10,11 @@
     <a href="{{ route('home') }}"
        class="flex items-center gap-3">
 
-        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow">
-            <span class="text-teal-500 font-bold text-lg">
-                PW
-            </span>
-        </div>
+        <img
+    src="{{ asset('images/Poliba_stemma.png') }}"
+    alt="Politecnico di Bari"
+    class="h-12 w-12 object-contain"
+>
 
         <div class="hidden md:block">
             <div class="text-white font-bold text-lg leading-none">

@@ -15,9 +15,14 @@ class DipendenteController extends Controller
         }
 
         $dipendenti = Dipendente::with('user')->get();
-        $users = User::all();
 
-        return view('dipendenti', compact('dipendenti', 'users'));
+$users = User::where('role', '!=', 'admin')->get();
+
+$utentiInAttesa = User::where('role', '!=', 'admin')
+    ->whereNotIn('id', Dipendente::whereNotNull('user_id')->pluck('user_id'))
+    ->get();
+
+return view('dipendenti', compact('dipendenti', 'users', 'utentiInAttesa'));
     }
 
     public function store(Request $request)
@@ -29,7 +34,7 @@ class DipendenteController extends Controller
         $request->validate([
             'nome' => 'required|string',
             'cognome' => 'nullable|string',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'nullable|exists:users,id|unique:dipendenti,user_id',
         ]);
 
         Dipendente::create([

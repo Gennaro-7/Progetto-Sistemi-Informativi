@@ -13,7 +13,9 @@ class FerieController extends Controller
     $user = auth()->user();
 
     if ($user->role === 'admin') {
-        $ferie = Ferie::with('dipendente')->get();
+        $ferie = Ferie::with('dipendente')
+    ->orderBy('created_at', 'desc')
+    ->get();
     } else {
         $ferie = Ferie::with('dipendente')
             ->whereHas('dipendente', function ($query) use ($user) {

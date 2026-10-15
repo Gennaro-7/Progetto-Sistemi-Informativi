@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\Dipendente;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,7 +29,22 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = Auth::user();
+
+if ($user->role !== 'admin' &&
+    !Dipendente::where('user_id', $user->id)->exists()) {
+
+    Auth::logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return back()->withErrors([
+        'email' => 'Il tuo account non è ancora stato abilitato dall’amministratore.',
+    ]);
+}
+
+        return redirect()->intended(route('home', absolute: false));
     }
 
     /**

@@ -8,18 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('segnalazioni', function (Blueprint $table) {
+        Schema::create('stipendi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dipendente_id')->nullable()->constrained('dipendenti')->nullOnDelete();
-            $table->string('titolo');
-            $table->text('descrizione');
-            $table->string('stato')->default('aperta');
+            $table->foreignId('dipendente_id')
+                ->constrained('dipendenti')
+                ->cascadeOnDelete();
+
+            $table->string('mese');
+            $table->string('anno');
+            $table->string('file');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('segnalazioni');
+        Schema::dropIfExists('stipendi');
     }
 };

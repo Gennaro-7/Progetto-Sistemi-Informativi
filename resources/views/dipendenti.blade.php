@@ -31,6 +31,55 @@
             </button>
             
         </form>
+
+        @if($utentiInAttesa->count() > 0)
+
+    <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 shadow-sm">
+
+        <h2 class="text-lg font-bold text-teal-600 mb-4">
+            Richieste di abilitazione
+        </h2>
+
+        @foreach($utentiInAttesa as $utente)
+
+    <div class="flex items-center justify-between border border-gray-200 rounded-lg p-4 mb-3">
+
+        <div>
+            <div class="font-semibold text-gray-800">
+                {{ $utente->name }}
+            </div>
+
+            <div class="text-sm text-gray-500">
+                {{ $utente->email }}
+            </div>
+        </div>
+
+        <form method="POST" action="{{ route('dipendenti.store') }}">
+            @csrf
+
+            <input type="hidden"
+                   name="nome"
+                   value="{{ $utente->name }}">
+
+            <input type="hidden"
+                   name="user_id"
+                   value="{{ $utente->id }}">
+
+            <button type="submit"
+                    class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg">
+                Associa
+            </button>
+
+        </form>
+
+    </div>
+
+@endforeach
+
+    </div>
+
+@endif
+
 <h2 class="text-xl font-bold text-teal-600 mb-4">
     Elenco dipendenti
 </h2>
